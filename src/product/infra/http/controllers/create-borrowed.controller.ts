@@ -13,10 +13,12 @@ import { CreateBorrowedProductUseCase } from 'src/product/domain/application/use
 import { ResourceAlreadyExists } from 'src/core/errors/resource-already-exists';
 import { ResourceNotFound } from 'src/core/errors/resource-not-found';
 import { Public } from '../../auth/public';
+import { createBorrowedMock } from 'test/mocks/product/product';
+import { BorrowedPresenter } from '../presenters/borrowed.presenter';
 
 export const createBorrowedBodySchema = z.object({
-  productId: z.string().min(1),
-  employeeId: z.string().min(1),
+  productId: z.string().uuid(),
+  employeeId: z.string().uuid(),
   saidAt: z.coerce.date(),
 });
 export type CreateBorrowedRequest = z.infer<typeof createBorrowedBodySchema>;
@@ -36,11 +38,7 @@ export class CreateBorrowedController {
     description: 'Borrowed creation payload',
     required: true,
     schema: {
-      example: {
-        productId: 'uuid-produto',
-        employeeId: 'uuid-employee',
-        saidAt: new Date().toISOString(),
-      },
+      example: {createBorrowedMock},
     },
   })
   @ApiResponse({
@@ -70,6 +68,6 @@ export class CreateBorrowedController {
           throw new BadRequestException(error.message);
       }
     }
-    return response.value;
+    return BorrowedPresenter.toHTTP(response.value);
   }
 }

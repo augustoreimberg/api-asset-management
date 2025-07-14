@@ -13,7 +13,7 @@ export class PrismaBorrowedMapper {
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt ?? new Date(),
         deletedAt: raw.deletedAt,
-        reasonDelete: raw.reasonBack,
+        reasonBack: raw.reasonBack,
       },
       new UniqueEntityID(raw.id),
     );
@@ -29,7 +29,7 @@ export class PrismaBorrowedMapper {
       createdAt: borrowed.createdAt,
       updatedAt: borrowed.updatedAt ?? new Date(),
       deletedAt: borrowed.deletedAt,
-      reasonBack: borrowed.reasonDelete,
+      reasonBack: borrowed.reasonBack,
     };
   }
 }

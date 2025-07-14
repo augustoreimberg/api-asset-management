@@ -5,7 +5,6 @@ import {
   GetProductsFilter,
 } from 'src/product/domain/application/repositories/product.respository';
 import { Product } from 'src/product/domain/enterprise/entities/product';
-import { Borrowed } from 'src/product/domain/enterprise/entities/borrowed';
 import { PrismaProductMapper } from '../mappers/prisma-product.mapper';
 import { PaginatedResponse } from 'src/core/repositories/paginated-response';
 import { ProductType } from '@prisma/client';
@@ -43,12 +42,11 @@ export class PrismaProductRepository implements ProductRepository {
     return PrismaProductMapper.toDomain(product);
   }
 
-  async findByTypeAndCode(
-    type: ProductType,
+  async findByCode(
     code: string,
   ): Promise<Product | null> {
     const product = await this.prisma.product.findFirst({
-      where: { productType: type, productCode: code, deletedAt: null },
+      where: { productCode: code, deletedAt: null },
     });
     if (!product) {
       return null;
@@ -67,10 +65,12 @@ export class PrismaProductRepository implements ProductRepository {
     } else if (filter?.deleted === false || filter?.deleted === undefined) {
       where.deletedAt = null;
     }
+
     if (filter?.productType) where.productType = filter.productType;
     if (filter?.productCode) where.productCode = filter.productCode;
     if (filter?.name)
       where.name = { contains: filter.name, mode: 'insensitive' };
+
     if (filter?.search) {
       where.OR = [
         { name: { contains: filter.search, mode: 'insensitive' } },
@@ -88,6 +88,7 @@ export class PrismaProductRepository implements ProductRepository {
     ]);
 
     const productIds = products.map((p) => p.id);
+
     const borrowed = await this.prisma.productEmployee.findMany({
       where: {
         productId: { in: productIds },
@@ -96,13 +97,19 @@ export class PrismaProductRepository implements ProductRepository {
       },
       select: { productId: true },
     });
+
     const borrowedIds = new Set(borrowed.map((b) => b.productId));
+
+    const filteredProducts = products.filter((p) => {
+      const isAvailable = !borrowedIds.has(p.id);
+      return filter?.available === true ? isAvailable : true;
+    });
 
     const lastPage = Math.ceil(total / perPage);
     const hasMore = page < lastPage;
 
     return {
-      data: products.map((raw) => {
+      data: filteredProducts.map((raw) => {
         const domain = PrismaProductMapper.toDomain(raw);
         domain.available = !borrowedIds.has(raw.id);
         return domain;
@@ -113,6 +120,7 @@ export class PrismaProductRepository implements ProductRepository {
       hasMore,
     };
   }
+
   async softDelete(id: string, reasonDelete: string): Promise<void> {
     await this.prisma.softDelete('product', { id: id }, reasonDelete);
   }
@@ -130,7 +138,7 @@ export class PrismaProductRepository implements ProductRepository {
 
   async findProductBorrowedById(id: string): Promise<any[]> {
     const productBorrowed = await this.prisma.productEmployee.findMany({
-      where: { productId: id, deletedAt: null },
+      where: { productId: id, deletedAt: {not: null} },
       include: { product: true },
     });
     return productBorrowed.map((pb) => ({

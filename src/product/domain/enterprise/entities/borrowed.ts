@@ -10,7 +10,7 @@ export type BorrowedProps = {
   createdAt?: Date;
   updatedAt?: Date | null;
   deletedAt?: Date | null;
-  reasonDelete?: string | null;
+  reasonBack?: string | null;
 };
 
 export class Borrowed extends Entity<BorrowedProps> {
@@ -62,12 +62,12 @@ export class Borrowed extends Entity<BorrowedProps> {
     return this.props.deletedAt || null;
   }
 
-  get reasonDelete() {
-    return this.props.reasonDelete || null;
+  get reasonBack() {
+    return this.props.reasonBack || null;
   }
 
-  set reasonDelete(reasonDelete: string | null) {
-    this.props.reasonDelete = reasonDelete;
+  set reasonBack(reasonBack: string | null) {
+    this.props.reasonBack = reasonBack || null;
     this.touch();
   }
 

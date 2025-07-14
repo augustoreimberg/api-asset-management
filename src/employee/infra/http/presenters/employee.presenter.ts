@@ -24,6 +24,7 @@ export class EmployeePresenter {
       products:
         employee.produtos?.map((p: any) => ({
           id: p.productId || p.id,
+          name: p.product?.name || p.name,
           productType: p.product?.productType || p.productType,
           productCode: p.product?.productCode || p.productCode,
           saidAt: p.saidAt,

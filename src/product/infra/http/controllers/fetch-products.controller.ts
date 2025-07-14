@@ -26,6 +26,10 @@ export const fetchProductsQuerySchema = z.object({
     (val) => val === 'true' || val === true,
     z.boolean().optional(),
   ),
+  available: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().optional(),
+  ),
 });
 export type FetchProductsQuerySchema = z.infer<typeof fetchProductsQuerySchema>;
 const queryValidationPipe = new ZodValidationPipe(fetchProductsQuerySchema);
@@ -48,6 +52,7 @@ export class FetchProductsController {
   @ApiQuery({ name: 'productCode', required: false, type: String })
   @ApiQuery({ name: 'productType', required: false, type: String })
   @ApiQuery({ name: 'deleted', required: false, type: Boolean })
+  @ApiQuery({ name: 'available', required: false, type: Boolean })
   @ApiResponse({
     status: 200,
     description: 'Paginated list of products',

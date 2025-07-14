@@ -30,7 +30,7 @@ export class EditProductUseCase {
             return left(new ResourceNotFound('product'));
         }
 
-        const productExists = await this.productRepository.findByTypeAndCode(productType, productCode);
+        const productExists = await this.productRepository.findByCode(productCode);
         if (productExists) {
             return left(new ResourceAlreadyExists('product'));
         }

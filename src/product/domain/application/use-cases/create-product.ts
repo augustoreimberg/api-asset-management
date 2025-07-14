@@ -30,8 +30,8 @@ export class CreateProductUseCase {
             return left(new Error('Invalid product type'));
         }
 
-        const productExists = await this.productRepository.findByTypeAndCode(data.productType, data.productCode);
-        if(productExists) return left(new ResourceAlreadyExists('product'));
+        const productExists = await this.productRepository.findByCode(data.productCode);
+        if(productExists) return left(new ResourceAlreadyExists('code'));
         const product = Product.create({
             ...data,
             name: data.name,
