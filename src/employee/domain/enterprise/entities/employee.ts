@@ -21,7 +21,7 @@ export type EmployeeProps = {
   createdAt?: Date;
   updatedAt?: Date | null;
   deletedAt?: Date | null;
-  produtos?: any[]; // Adicione o campo produtos (relacionamento)
+  produtos?: any[];
 };
 
 export class Employee extends Entity<EmployeeProps> {

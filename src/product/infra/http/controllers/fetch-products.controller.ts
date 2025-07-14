@@ -16,9 +16,16 @@ import { responseProductMock } from 'test/mocks/product/product';
 
 export const fetchProductsQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
+  search: z.string().optional(),
   id: z.string().optional(),
   productCode: z.string().optional(),
-  productType: z.enum(['NOTEBOOK', 'CHARGER', 'MONITOR', 'MOUSE', 'KEYBOARD', 'HEADPHONE']).optional(),
+  productType: z
+    .enum(['NOTEBOOK', 'CHARGER', 'MONITOR', 'MOUSE', 'KEYBOARD', 'HEADPHONE'])
+    .optional(),
+  deleted: z.preprocess(
+    (val) => val === 'true' || val === true,
+    z.boolean().optional(),
+  ),
 });
 export type FetchProductsQuerySchema = z.infer<typeof fetchProductsQuerySchema>;
 const queryValidationPipe = new ZodValidationPipe(fetchProductsQuerySchema);
@@ -29,38 +36,45 @@ const queryValidationPipe = new ZodValidationPipe(fetchProductsQuerySchema);
 export class FetchProductsController {
   constructor(private fetchProductsUseCase: FetchProductsUseCase) {}
   @Get()
-    @ApiOperation({ summary: 'List products with pagination and filters' })
-    @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-    @ApiQuery({ name: 'id', required: false, type: String })
-    @ApiQuery({ name: 'productCode', required: false, type: String })
-    @ApiQuery({ name: 'productType', required: false, type: String })
-    @ApiResponse({
-      status: 200,
-      description: 'Paginated list of products',
-      schema: {
-        example: {
-          data: [responseProductMock],
-          total: 1,
-          page: 1,
-          lastPage: 1,
-          hasMore: false,
-        },
+  @ApiOperation({ summary: 'List products with pagination and filters' })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    example: 'Monitor',
+  })
+  @ApiQuery({ name: 'id', required: false, type: String })
+  @ApiQuery({ name: 'productCode', required: false, type: String })
+  @ApiQuery({ name: 'productType', required: false, type: String })
+  @ApiQuery({ name: 'deleted', required: false, type: Boolean })
+  @ApiResponse({
+    status: 200,
+    description: 'Paginated list of products',
+    schema: {
+      example: {
+        data: [responseProductMock],
+        total: 1,
+        page: 1,
+        lastPage: 1,
+        hasMore: false,
       },
-    })
-    @ApiResponse({ status: 404, description: 'No product found' })
-    @ApiResponse({ status: 400, description: 'Validation or other error' })
-    async handle(@Query(queryValidationPipe) query: FetchProductsQuerySchema) {
-      const response = await this.fetchProductsUseCase.execute(query);
-      if (response.isLeft()) {
-        const error = response.value;
-        if (error instanceof ResourceNotFound) {
-          throw new NotFoundException(error.message);
-        }
-        throw new BadRequestException(error);
+    },
+  })
+  @ApiResponse({ status: 404, description: 'No product found' })
+  @ApiResponse({ status: 400, description: 'Validation or other error' })
+  async handle(@Query(queryValidationPipe) query: FetchProductsQuerySchema) {
+    const response = await this.fetchProductsUseCase.execute(query);
+    if (response.isLeft()) {
+      const error = response.value;
+      if (error instanceof ResourceNotFound) {
+        throw new NotFoundException(error.message);
       }
-      return {
-        ...response.value,
-        data: response.value.data.map(ProductPresenter.toHTTP),
-      };
+      throw new BadRequestException(error);
     }
+    return {
+      ...response.value,
+      data: response.value.data.map(ProductPresenter.toHTTP),
+    };
+  }
 }

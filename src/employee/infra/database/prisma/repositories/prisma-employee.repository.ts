@@ -110,7 +110,7 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
         where,
         skip: (page - 1) * perPage,
         take: perPage,
-        include: { produtos: true }, // Corrigido para 'produtos'
+        include: { produtos: true },
       }),
     ]);
 

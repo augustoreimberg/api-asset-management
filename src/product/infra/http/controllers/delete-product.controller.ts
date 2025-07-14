@@ -17,6 +17,7 @@ import { ResourceAlreadyExists } from 'src/core/errors/resource-already-exists';
 
 export const deleteProductQuerySchema = z.object({
   id: z.string().uuid(),
+  reasonDelete: z.string().min(3).max(255),
 });
 export type DeleteProductQuery = z.infer<typeof deleteProductQuerySchema>;
 
@@ -41,7 +42,7 @@ export class DeleteProductController {
     @ApiResponse({ status: 400, description: 'Validation or other error' })
 
     async handle(@Body(bodyValidationPipe) body: DeleteProductQuery,){
-        const response = await this.deleteProductUseCase.execute(body.id);
+        const response = await this.deleteProductUseCase.execute(body.id, body.reasonDelete);
         if (response.isLeft()) {
           const error = response.value;
           switch (error.constructor) {

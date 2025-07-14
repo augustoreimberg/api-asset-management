@@ -48,6 +48,7 @@ export class EditProductController {
       const { id: productId, ...data} = body;
       const cleanBody = {
           ...data,
+          name: data.productType ?? undefined,
           productType: data.productType ?? undefined,
           productCode: data.productCode ?? undefined,
       };

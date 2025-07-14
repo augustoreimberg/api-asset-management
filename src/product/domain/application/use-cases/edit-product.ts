@@ -7,6 +7,7 @@ import { Product } from '../../enterprise/entities/product';
 
 export type EditProductUseCaseRequest = {
     id: string;
+    name: string;
     productType: string;
     productCode: string;
 };
@@ -19,6 +20,7 @@ export class EditProductUseCase {
 
     async execute({
         id,
+        name,
         productType,
         productCode,
     }: EditProductUseCaseRequest): Promise<EditProductUseCaseResponse> {
@@ -33,6 +35,7 @@ export class EditProductUseCase {
             return left(new ResourceAlreadyExists('product'));
         }
 
+        product.name = name ?? product.name
         product.productType = productType ?? product.productType
         product.productCode = productCode ?? product.productCode
 

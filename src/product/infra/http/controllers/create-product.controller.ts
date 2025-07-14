@@ -18,6 +18,7 @@ import { createProductMock } from 'test/mocks/product/product';
 import { responseProductMock } from 'test/mocks/product/product';
 
 export const createProductBodySchema = z.object({
+  name: z.string().min(3).max(255),
   productType: z.enum(['NOTEBOOK', 'CHARGER', 'MONITOR', 'MOUSE', 'KEYBOARD', 'HEADPHONE']),
   productCode: z.string().min(2).max(255),
 });

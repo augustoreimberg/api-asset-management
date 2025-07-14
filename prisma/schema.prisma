@@ -51,9 +51,11 @@ model Employee {
 
 model Product {
   id String @id @default(uuid())
+  name String
 
-  productType ProductType
-  productCode String      @unique
+  productType  ProductType
+  productCode  String      @unique
+  reasonDelete String?
 
   ProductEmployee ProductEmployee[]
 
@@ -63,18 +65,19 @@ model Product {
 }
 
 model ProductEmployee {
-  id         String   @id @default(uuid())
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId String
+  id          String   @id @default(uuid())
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  employeeId  String
 
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
+  product    Product @relation(fields: [productId], references: [id])
+  productId  String
 
-  saidAt    DateTime
-  backAt    DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  saidAt     DateTime
+  backAt     DateTime?
+  reasonBack String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
 
   @@index([deletedAt])
 }

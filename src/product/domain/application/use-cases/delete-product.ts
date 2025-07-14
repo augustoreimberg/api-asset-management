@@ -10,12 +10,12 @@ export type DeleteProductResponse = Either<ResourceAlreadyExists, Product>
 export class DeleteProductUseCase {
     constructor(private productRepository: ProductRepository) {}
 
-    async execute(id: string): Promise<DeleteProductResponse> {
+    async execute(id: string, reasonDelete: string): Promise<DeleteProductResponse> {
         const product = await this.productRepository.findById(id);
         if (!product) {
             return left(new ResourceAlreadyExists('Product'));
         }
-        await this.productRepository.softDelete(id);
+        await this.productRepository.softDelete(id, reasonDelete);
         return right(product);
     }
 }

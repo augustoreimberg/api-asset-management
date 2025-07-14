@@ -17,7 +17,7 @@ export class FetchProductsUseCase {
         if (!products.data.length) {
             return left(new ResourceNotFound('Product'));
         }
-
+        
         return right(products);
     }
 }

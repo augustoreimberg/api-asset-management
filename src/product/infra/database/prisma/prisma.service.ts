@@ -20,7 +20,7 @@ export class PrismaService
     await this.$disconnect();
   }
 
-  async softDelete(model: string, where: any) {
+  async softDelete(model: string, where: any, reasonDelete: string) {
     const entity = (this as any)[model];
     if (!entity || !entity.update) {
       throw new Error(`Model ${model} not found`);
@@ -30,6 +30,7 @@ export class PrismaService
       where,
       data: {
         deletedAt: new Date(),
+        reasonDelete,
       },
     });
   }

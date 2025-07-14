@@ -5,6 +5,7 @@ import { ProductRepository } from "src/product/domain/application/repositories/p
 import { Product } from "src/product/domain/enterprise/entities/product";
 
 export type CreateProductRequest = {
+    name: string;
     productType: string;
     productCode: string;
 };
@@ -33,6 +34,7 @@ export class CreateProductUseCase {
         if(productExists) return left(new ResourceAlreadyExists('product'));
         const product = Product.create({
             ...data,
+            name: data.name,
             productType: data.productType,
             productCode: data.productCode,
         })
