@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Filial {
+  MATRIZ
+  RJ
+  ALPHAVILLE
+  PINDA
+}
+
+enum ProductType {
+  NOTEBOOK
+  CHARGER
+  MONITOR
+  MOUSE
+  KEYBOARD
+  HEADPHONE
+}
+
+model Employee {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  filial        Filial
+  nationality   String
+  maritalStatus String
+  birthDate     DateTime
+  cpf           String   @unique
+  rg            String
+  address       String
+  houseNumber   String
+  neighborhood  String
+  city          String
+  state         String
+  cep           String
+
+  produtos ProductEmployee[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+
+  @@index([deletedAt])
+}
+
+model Product {
+  id String @id @default(uuid())
+
+  productType ProductType
+  productCode String      @unique
+
+  ProductEmployee ProductEmployee[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  deletedAt DateTime?
+}
+
+model ProductEmployee {
+  id         String   @id @default(uuid())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  saidAt    DateTime
+  backAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([deletedAt])
+}
