@@ -17,6 +17,7 @@ import { editProductMock } from 'test/mocks/product/product';
 
 export const editProductBodySchema = z.object({
     id: z.string().uuid(),
+    name: z.string().min(2).max(255),
     productType: z.enum(['NOTEBOOK', 'CHARGER', 'MONITOR', 'MOUSE', 'KEYBOARD', 'HEADPHONE']),
     productCode: z.string().min(2).max(255),
 });
@@ -48,7 +49,7 @@ export class EditProductController {
       const { id: productId, ...data} = body;
       const cleanBody = {
           ...data,
-          name: data.productType ?? undefined,
+          name: data.name ?? undefined,
           productType: data.productType ?? undefined,
           productCode: data.productCode ?? undefined,
       };
