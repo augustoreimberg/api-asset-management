@@ -23,7 +23,8 @@ export class EmployeePresenter {
       deletedAt: employee.deletedAt,
       products:
         employee.produtos?.map((p: any) => ({
-          id: p.productId || p.id,
+          id: p.id,
+          borrowedId: p.borrowed_id,
           name: p.product?.name || p.name,
           productType: p.product?.productType || p.productType,
           productCode: p.product?.productCode || p.productCode,

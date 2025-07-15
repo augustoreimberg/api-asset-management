@@ -1,9 +1,9 @@
 import { Product } from 'src/product/domain/enterprise/entities/product';
 
 export class ProductPresenter {
-  static toHTTP(product: Product) {
+  static toHTTP(product: any) {
     return {
-      id: product.id.toString(),
+      id: product.id?.toString?.() ?? product.id,
       name: product.name,
       productType: product.productType,
       productCode: product.productCode,
@@ -11,7 +11,8 @@ export class ProductPresenter {
       updatedAt: product.updatedAt,
       deletedAt: product.deletedAt,
       reasonDelete: product.reasonDelete,
-      available: (product as any).available,
+      available: product.available,
+      borrowed_id: product.borrowed_id ?? undefined,
     };
   }
 }

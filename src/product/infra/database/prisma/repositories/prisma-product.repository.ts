@@ -42,9 +42,7 @@ export class PrismaProductRepository implements ProductRepository {
     return PrismaProductMapper.toDomain(product);
   }
 
-  async findByCode(
-    code: string,
-  ): Promise<Product | null> {
+  async findByCode(code: string): Promise<Product | null> {
     const product = await this.prisma.product.findFirst({
       where: { productCode: code, deletedAt: null },
     });
@@ -131,14 +129,15 @@ export class PrismaProductRepository implements ProductRepository {
       include: { product: true },
     });
     return productEmployees.map((pe) => ({
-      ...pe,
-      product: pe.product,
+      ...pe.product,
+      id: pe.product.id, // garante que o id é do produto
+      borrowed_id: pe.id, // id do empréstimo
     }));
   }
 
   async findProductBorrowedById(id: string): Promise<any[]> {
     const productBorrowed = await this.prisma.productEmployee.findMany({
-      where: { productId: id, deletedAt: {not: null} },
+      where: { productId: id, deletedAt: { not: null } },
       include: { product: true },
     });
     return productBorrowed.map((pb) => ({
