@@ -31,7 +31,7 @@ export const createEmployeeBodySchema = z.object({
   neighborhood: z.string().min(3).max(255),
   city: z.string().min(3).max(255),
   state: z.string().min(2).max(255),
-  cep: z.string().min(3).max(255),
+  cep: z.string().min(3).max(10),
 })
 export type CreateEmployeeBodySchema = z.infer<typeof createEmployeeBodySchema>;
 const bodyValidationPipe = new ZodValidationPipe(createEmployeeBodySchema);

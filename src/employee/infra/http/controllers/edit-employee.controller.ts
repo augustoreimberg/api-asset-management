@@ -30,7 +30,7 @@ export const editEmployeeQuerySchema = z.object({
   neighborhood: z.string().min(3).max(255),
   city: z.string().min(3).max(255),
   state: z.string().min(2).max(2),
-  cep: z.string().min(8).max(8),
+  cep: z.string().min(3).max(10),
 })
 export type editAccountBodySchema = z.infer<typeof editEmployeeQuerySchema>
 
