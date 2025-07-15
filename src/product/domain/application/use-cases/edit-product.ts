@@ -6,40 +6,43 @@ import { Either, left, right } from 'src/core/either';
 import { Product } from '../../enterprise/entities/product';
 
 export type EditProductUseCaseRequest = {
-    id: string;
-    name: string;
-    productType: string;
-    productCode: string;
+  id: string;
+  name: string;
+  productType: string;
+  productCode: string;
 };
 
-export type EditProductUseCaseResponse = Either<ResourceNotFound | ResourceAlreadyExists, Product>;
+export type EditProductUseCaseResponse = Either<
+  ResourceNotFound | ResourceAlreadyExists,
+  Product
+>;
 
 @Injectable()
 export class EditProductUseCase {
-    constructor(private productRepository: ProductRepository) {}
+  constructor(private productRepository: ProductRepository) {}
 
-    async execute({
-        id,
-        name,
-        productType,
-        productCode,
-    }: EditProductUseCaseRequest): Promise<EditProductUseCaseResponse> {
-        const product = await this.productRepository.findById(id);
+  async execute({
+    id,
+    name,
+    productType,
+    productCode,
+  }: EditProductUseCaseRequest): Promise<EditProductUseCaseResponse> {
+    const product = await this.productRepository.findById(id);
 
-        if (!product) {
-            return left(new ResourceNotFound('product'));
-        }
-
-        const productExists = await this.productRepository.findByCode(productCode);
-        if (productExists) {
-            return left(new ResourceAlreadyExists('product'));
-        }
-
-        product.name = name ?? product.name
-        product.productType = productType ?? product.productType
-        product.productCode = productCode ?? product.productCode
-
-        await this.productRepository.update(product);
-        return right(product);
+    if (!product) {
+      return left(new ResourceNotFound('product'));
     }
+
+    const productExists = await this.productRepository.findByCode(productCode);
+    if (productExists && productExists.id.toString() !== id) {
+      return left(new ResourceAlreadyExists('product'));
+    }
+
+    product.name = name ?? product.name;
+    product.productType = productType ?? product.productType;
+    product.productCode = productCode ?? product.productCode;
+
+    await this.productRepository.update(product);
+    return right(product);
+  }
 }
