@@ -127,6 +127,6 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
   }
 
   async softDelete(id: string): Promise<void> {
-    await this.prisma.softDelete('account', { id: id });
+    await this.prisma.softDelete('employee', { id: id });
   }
 }

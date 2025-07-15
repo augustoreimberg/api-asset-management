@@ -56,5 +56,4 @@ export class DeleteProductController {
         }
         return { message: `Product with id:${body.id} deleted` };
     }
-
 }

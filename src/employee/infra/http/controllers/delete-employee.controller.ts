@@ -4,7 +4,7 @@ import {
   Delete,
   MethodNotAllowedException,
   NotFoundException,
-  Query,
+  Body,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { z } from 'zod';
@@ -39,7 +39,7 @@ export class DeleteEmployeeController {
     description: 'Account with id:${id} deleted',
   })
   @ApiResponse({ status: 400, description: 'Validation or other error' })
-  async handle(@Query(bodyValidationPipe) body: DeleteEmployeeQuery) {
+  async handle(@Body(bodyValidationPipe) body: DeleteEmployeeQuery) {
     const response = await this.deleteEmployeeUseCase.execute(body.id);
     if (response.isLeft()) {
       const error = response.value;
